@@ -1,0 +1,782 @@
+/* --- 전체 페이지 기본 설정 --- */
+:root {
+    --visual-color: #55a6d9;
+    --uiux-color: #62c370;
+    --frontend-color: #f7b267;
+    --strategy-color: #f76f67;
+    --frontend-color-rgb: 247, 178, 103; /* (추가) 애니메이션을 위한 RGB 값 */
+    --project-color-1: #e06c75;
+    --project-color-2: #98c379;
+    --project-color-3: #61afef;
+    --project-color-4: #c678dd;
+    --project-color-5: #56b6c2;
+    --project-color-6: #e06c75;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-color: #0d0d0d;
+    font-family: 'Teko', sans-serif;
+    overflow-x: hidden;
+    color: #f0f0f0;
+    scroll-behavior: smooth;
+}
+
+/* --- 로딩 화면 (수정) --- */
+/* (삭제) 시작 화면 스타일 제거 */
+
+/* (수정) 로더가 초기에 보이도록 display: flex로 변경 */
+#loader-wrapper{position:fixed;top:0;left:0;width:100%;height:100%;background-color:#0d0d0d;display:flex;justify-content:center;align-items:center;flex-direction:column;z-index:9999;transition:opacity .5s ease-out; cursor: pointer;}
+/* (수정) 컨테이너(보이는 부분) 크기 2배 증가 */
+/* (수정) 텍스트가 가려지지 않도록 위치 조정 */
+.ball-container{
+    position:relative;
+    width:200px;
+    height:200px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start; /* 공을 위쪽에 정렬 */
+} 
+
+/* (수정) 3D 회전 애니메이션 적용 */
+#loading-ball{
+    width:100px;
+    height:100px;
+    animation: dribble-loading 0.7s cubic-bezier(0.6, -0.28, 0.74, 0.05) infinite;
+    position: relative; /* (추가) z-index 적용을 위함 */
+    /* (추가) 로딩 완료 후 애니메이션을 위해 트랜지션 추가 */
+    transition: opacity 0.5s ease;
+}
+
+/* (추가) 3D 캔버스 스타일 */
+.ball-container canvas {
+    width: 100% !important; /* Three.js 캔버스 크기 강제 */
+    height: 100% !important;
+    object-fit: contain;
+    display: none; /* 3D 모델을 사용하지 않으므로 숨김 */
+}
+
+.loading-text{
+    color:#fff;
+    font-size:2rem;
+    letter-spacing:5px;
+    margin-top:40px;
+    animation: pulse-text 2s ease-in-out infinite; /* (추가) 텍스트 애니메이션 */
+}
+@keyframes pulse-text {
+    0%, 100% { opacity: 0.6; } 50% { opacity: 1; }
+}
+/* (추가) 클릭 유도 텍스트 스타일 */
+.start-prompt {
+    color: #fff;
+    font-size: 2rem;
+    letter-spacing: 5px;
+    margin-top: 20px;
+    animation: pulse-text 2s ease-in-out infinite;
+    position: absolute; /* 다른 텍스트 위에 위치 */
+    bottom: 15%;
+}
+
+/* (추가) 드리블 로딩 애니메이션 */
+/* (수정) 멈추는 느낌 없는 원래의 자연스러운 애니메이션으로 복원 */
+@keyframes dribble-loading {
+    0% {
+        transform: translateY(40px) scale(0.9, 1.1); /* 튀어 오름 */
+    }
+    50% {
+        transform: translateY(150px) scale(1.2, 0.8); /* 바닥에 닿음 */
+    }
+    100% {
+        transform: translateY(40px) scale(0.9, 1.1); /* 다시 튀어 오름 */
+    }
+}
+
+/* (추가) 로딩 완료 시 드리블 애니메이션을 위한 클래스 */
+#loader-wrapper.is-loaded #loading-ball {
+    /* 회전 애니메이션을 중지하고 드리블 애니메이션 시작 */
+    animation: dribble-out 1.2s cubic-bezier(0.3, 0, 0.1, 1) forwards; /* (수정) 애니메이션 지속 시간 1.2s로 단축 */
+    z-index: 10; /* (추가) 텍스트보다 앞에 오도록 설정 */
+}
+
+/* (추가) 드리블하며 사라지는 애니메이션 */
+/* (수정) 바운스를 2번으로 간소화 */
+@keyframes dribble-out {
+    0%   { transform: translateY(150px) scale(1.2, 0.8); opacity: 1; } /* 1st bounce: 바닥 */
+    30%  { transform: translateY(80px) scale(0.9, 1.1); }              /* 1st bounce: 튀어오름 */
+    60%  { transform: translateY(150px) scale(1.1, 0.9); }              /* 2nd bounce: 바닥 */
+    85%  { transform: translateY(150px) scale(2); opacity: 1; }        /* 확대 시작 */
+    100% { transform: translateY(150px) scale(20); opacity: 0; }       /* 사라짐 */
+}
+
+/* --- 헤더 / 네비게이션 바 --- */
+/* (수정) 헤더 등장 타이밍 8.7s -> 5.5s로 변경 */
+/* (수정) 헤더 등장 타이밍을 9.5초로 조정 */
+/* (수정) JS로 애니메이션을 제어하므로 animation 속성 제거 */
+#main-header{position:fixed;top:0;left:0;width:100%;display:flex;justify-content:space-between;align-items:center;padding:1rem 3rem;box-sizing:border-box;z-index:1000;background:linear-gradient(to bottom,rgba(13,13,13,.8),transparent);opacity:0;transform:translateY(-20px);transition:opacity 1s ease-out, transform 1s ease-out;}
+@keyframes fadeInHeader{to{opacity:1;transform:translateY(0)}}
+#main-header .logo{font-size:2rem;font-weight:700;letter-spacing:2px}
+#main-header nav ul{list-style:none;margin:0;padding:0;display:flex}
+#main-header nav li{margin-left:2rem}
+#main-header nav a{text-decoration:none;color:#f0f0f0;font-size:1.2rem;letter-spacing:1px;transition:color .3s}
+
+/* (수정) 호버 및 활성 상태 스타일 */
+#main-header nav a:hover,
+#main-header nav a.active {
+    color: var(--visual-color); /* 하이라이트 색상 */
+    text-shadow: 0 0 8px var(--visual-color);
+}
+
+/* --- 인트로 화면 --- */
+/* (수정) height로 고정 (인트로 전용) */
+#content{height:100vh;color:#fff;text-align:center;opacity:0;visibility:hidden;position:relative}
+
+/* (수정) main-intro-text가 100vh를 차지하도록 */
+.main-intro-text{position:absolute;top:0;left:0;width:100%;height:100vh;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;font-size:8vw;font-weight:700;color:#fff;line-height:1;pointer-events:none}
+/* (수정) 애니메이션 지속 시간 및 딜레이 조정 */
+/* (수정) JS로 애니메이션을 제어하므로 animation 속성 제거 */
+.main-intro-text .text-part{display:inline-block;opacity:0;margin:0 1vw;white-space:nowrap}
+/* (추가) JS로 애니메이션을 시작하기 위한 클래스 */
+.animations-started .main-intro-text .text-part{animation:growAndFadeOut 7s forwards}
+.animations-started .main-intro-text .text-part:nth-child(1){animation-delay:0.8s}
+.animations-started .main-intro-text .text-part:nth-child(2){animation-delay:1.6s}
+.animations-started .main-intro-text .text-part:nth-child(3){animation-delay:2.4s}
+.animations-started .main-intro-text .text-part:nth-child(4){animation-delay:3.2s}
+.animations-started .main-intro-text .text-part:nth-child(5){animation-delay:4.0s}
+
+/* (수정) 텍스트가 그려지는 듯한 'writing' 애니메이션으로 변경 */
+@keyframes growAndFadeOut {
+    /* 1. 텍스트가 그려지며 등장 */
+    0% {
+        opacity: 1;
+        background-position: 100% 0; /* 그라데이션을 오른쪽 끝에서 시작 */
+    }
+    25% {
+        opacity: 1;
+        background-position: 0 0; /* 그라데이션을 왼쪽으로 이동시켜 텍스트를 채움 */
+    }
+    /* 2. 잠시 유지 후 사라짐 */
+    80% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(1.5);
+        filter: blur(10px);
+    }
+}
+/* (추가) 홈 콘텐츠 (소개 및 철학) - 메인 화면에 통합 */.home-content-inner {
+    display: flex;    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 5%;
+    box-sizing: border-box;
+    
+    /* (수정) JS로 애니메이션을 제어하므로 animation 속성 제거 */
+    opacity: 0;
+}
+
+@keyframes fadeInHomeContent {
+    from {
+        opacity: 0;
+        transform: translateY(30px); /* 아래에서 시작 */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0); /* 원래 위치로 */
+    }
+}
+
+.about-me, .design-philosophy {
+    max-width: 800px; /* 너무 길어지지 않게 */
+}
+
+.home-content-inner h2 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #f0f0f0;
+    margin-bottom: 1.5rem;
+    letter-spacing: 2px;
+    text-align: center;
+}
+.home-content-inner p {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    color: #ccc;
+    line-height: 1.8;
+    text-align: center;
+}
+.design-philosophy .typing-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--project-color-1);
+    line-height: 1.6;
+    min-height: 100px; 
+    word-break: keep-all;
+}
+
+/* (수정) 범용 스크롤 트리거 (블러 효과 추가) */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    filter: blur(5px); /* (추가) 블러 효과 */
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out, filter 0.8s ease-out; /* (추가) 필터 트랜지션 */
+}
+.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0); /* (추가) 블러 제거 */
+}
+
+/* (추가) 스탯 섹션 선수 카드 등장 애니메이션 */
+@keyframes slam-dunk-in {
+    0% {
+        opacity: 0;
+        transform: translateY(-200px) scale(0.7);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(10px) scale(1.1); /* 바닥에 충돌 */
+    }
+    80% {
+        transform: translateY(-5px) scale(0.95); /* 살짝 튀어오름 */
+    }
+    100% {
+        transform: translateY(0) scale(1); /* 제자리 안착 */
+    }
+}
+
+@keyframes fade-in-delay {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 스크롤 시 선수 카드 요소들에 개별 애니메이션 적용 */
+.player-card.is-visible {
+    opacity: 1; /* 부모는 바로 보이게 */
+    filter: none;
+    transform: none;
+}
+.player-card.is-visible .overall-rating { animation: slam-dunk-in 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+.player-card.is-visible .player-details { animation: fade-in-delay 0.6s ease-out 0.3s forwards; opacity: 0; }
+.player-card.is-visible .player-archetype { animation: fade-in-delay 0.6s ease-out 0.5s forwards; opacity: 0; }
+
+
+/* (추가) 홈 콘텐츠 반응형 */
+@media (max-width: 768px) {
+    .home-content-inner h2 {
+        font-size: 2.5rem;
+    }
+    .design-philosophy .typing-text {
+        font-size: 1.5rem;
+    }
+}
+
+
+/* --- 능력치(스탯) 섹션 --- */
+#stats-section { background: #181818 url("nonggukoteu.jpg") center/cover no-repeat; position: relative; }
+#stats-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(20,20,20,0.45); /* 어둡게 오버레이 */
+  z-index: 0;
+}
+.stats-container, .skills-grid, .playbook-court { position: relative; z-index: 1; }
+
+#stats-section{min-height:100vh;padding:100px 2%;box-sizing:border-box;display:flex;justify-content:center;align-items:center;}
+.stats-container{width:100%;max-width:1800px;}
+.player-card{background-color:rgba(30,30,30,.7);border:1px solid #333;padding:1.5rem 2rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:3rem}
+.player-info{display:flex;align-items:center}
+.overall-rating{font-size:4.5rem;font-weight:700;margin-right:1.5rem;color:#f0f0f0;border:3px solid #f0f0f0;width:90px;height:90px;border-radius:50%;display:flex;justify-content:center;align-items:center}
+.player-card {
+  background: rgba(30,30,30,.85); border-radius: 24px; box-shadow: 0 8px 22px #0006;
+  border: 1px solid #333; padding: 2rem 3rem; display: flex; align-items: center; margin-bottom: 2.5rem;
+  justify-content: space-between; /* 요소들을 양쪽으로 정렬 */
+}
+.player-info { display: flex; align-items: center; gap: 2rem; }
+.player-photo { width: 90px; height: 90px; border-radius: 50%; border: 3px solid #555; object-fit: cover; }
+.player-details h1{margin:0;font-size:3rem;letter-spacing:2px}
+.player-details p{margin:0;font-size:1.1rem;color:#aaa;letter-spacing:1px}
+.overall-rating { font-size: 4rem; font-weight: 900; border-radius: 50%; background: #111; color: #f0f0f0; width: 90px; height: 90px; display: flex; justify-content: center; align-items: center; border: 3px solid #f0f0f0; }
+.player-archetype{display:flex;align-items:center;font-size:1.4rem;color:#ccc}
+.trophy-icon{width:28px;height:28px;margin-right:.7rem}
+.skills-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2rem}
+.skill-category{
+    background-color:rgba(20,20,20,.5);padding:2rem;border:1px solid #2a2a2a;display:flex;flex-direction:column;
+}
+.skill-category.wide{grid-column:span 1}
+.category-content-wrapper{display:flex;gap:2rem;align-items:flex-end}
+/* (수정) 프로필 이미지 스타일 추가 */
+.dynamic-profile{
+    width:250px;height:400px;border:2px solid #444;flex-shrink:0;
+    overflow: hidden; /* 이미지가 테두리를 넘어가지 않도록 */
+}
+.dynamic-profile img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: grayscale(100%) brightness(0.8); /* 흑백 및 밝기 조절 */
+    transition: filter 0.4s, transform 0.4s;
+}
+.dynamic-profile:hover img {
+    filter: grayscale(0%) brightness(1); /* 호버 시 컬러로 변경 */
+    transform: scale(1.05); /* 살짝 확대 */
+}
+.category-title{font-size:2.5rem;margin:0 0 2rem;text-align:left;letter-spacing:2px;text-transform:uppercase}
+.bars-container{display:flex;justify-content:space-around;height:400px;width:100%;align-items:flex-end}
+.skill-bar-wrapper{display:flex;flex-direction:column;align-items:center;text-align:center;width:25%;height:100%}
+.bar-bg{width:60px;height:100%;background-color:rgba(0,0,0,.3);display:flex;align-items:flex-end;order:2}
+.bar{
+    width:100%;
+    height:0;
+    /* (수정) 높이와 배경 위치를 함께 애니메이션 */
+    transition: height 3.7s cubic-bezier(.23,1,.32,1), background-position 3.7s ease-out;
+    /* (추가) 쉬머 효과를 위한 그라데이션 배경 */
+    background-size: 100% 300%; /* 배경을 3배 크게 */
+    background-position: 0 100%; /* 시작 위치를 아래로 */
+}
+.skill-value{font-size:2.8rem;font-weight:700;order:1;margin-bottom:.5rem}
+.skill-name{font-size:1.2rem;color:#bbb;margin-top:1rem;order:3;word-break:keep-all;line-height:1.2}
+/* (수정) 각 카테고리별로 쉬머 그라데이션 배경 적용 */
+.cat-visual .category-title,.cat-visual .skill-value{color:var(--visual-color)}
+.cat-visual .bar{background-image: linear-gradient(180deg, var(--visual-color), #a1d6f0 50%, var(--visual-color))}
+.cat-uiux .category-title,.cat-uiux .skill-value{color:var(--uiux-color)}
+.cat-uiux .bar{background-image: linear-gradient(180deg, var(--uiux-color), #aee8b5 50%, var(--uiux-color))}
+.cat-frontend .category-title,.cat-frontend .skill-value{color:var(--frontend-color)}
+.cat-frontend .bar{background-image: linear-gradient(180deg, var(--frontend-color), #fce0bf 50%, var(--frontend-color))}
+.cat-strategy .category-title,.cat-strategy .skill-value{color:var(--strategy-color)}
+.cat-strategy .bar{background-image: linear-gradient(180deg, var(--strategy-color), #fcc2bf 50%, var(--strategy-color))}
+
+/* --- 반응형 디자인: 능력치(스탯) 섹션 --- */
+@media (max-width: 1200px) {
+    .skills-grid {
+        grid-template-columns: 1fr 1fr; /* 2열 그리드 */
+    }
+    .skill-category.wide {
+        grid-column: span 2; /* 넓은 카드는 2칸 차지 */
+    }
+    .player-card {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        text-align: center;
+    }
+    .player-info {
+        flex-direction: column;
+    }
+    .overall-rating {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    #stats-section {
+        padding: 80px 4%;
+    }
+    .skills-grid {
+        grid-template-columns: 1fr; /* 1열 그리드 */
+    }
+    .skill-category.wide {
+        grid-column: span 1; /* 넓은 카드도 1칸 차지 */
+    }
+    .player-details h1 { font-size: 2.5rem; }
+    .player-details p { font-size: 1rem; }
+    .overall-rating { font-size: 4rem; width: 80px; height: 80px; }
+    .category-title { font-size: 2rem; }
+    .skill-value { font-size: 2.2rem; }
+    .bars-container { height: 300px; }
+    .bar-bg { width: 45px; }
+}
+/* (추가) 모바일에서 VISUAL & STRATEGIST 카드 레이아웃 수정 */
+@media (max-width: 600px) {
+    .category-content-wrapper {
+        flex-direction: column; /* 세로로 쌓이도록 변경 */
+        align-items: center;    /* 가운데 정렬 */
+    }
+    .dynamic-profile {
+        margin-bottom: 2rem; /* 이미지와 스킬 바 사이 간격 추가 */
+    }
+}
+
+/* --- Works (하이라이트) 섹션 --- */
+/* (수정) 움직이는 그라데이션 배경 적용 */
+#works-section {
+    min-height: 100vh;
+    padding: 100px 5%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* (수정) 콘텐츠를 위쪽으로 정렬 */
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(135deg, #1a1a1a, var(--project-color-1), var(--project-color-3), var(--project-color-4), #1a1a1a);
+    background-size: 400% 400%;
+    animation: gradient-flow 20s ease infinite;
+}
+@keyframes gradient-flow {
+    0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%}
+}
+.section-title{font-size:5rem;font-weight:700;color:#fff;margin-bottom:4rem;letter-spacing:5px;z-index:1;position:relative;text-shadow:2px 2px 5px rgba(0,0,0,.5)}
+/* (수정) 전술판 배경이 섹션 전체를 덮도록 변경 */
+.playbook-court{
+    position:absolute; top: 0; left: 0; width:100%; height: 100%;
+    z-index: 0; /* 다른 콘텐츠 뒤에 위치 */
+}
+.court-bg{
+    width:100%; height:100%; object-fit:cover; /* (수정) 이미지가 영역을 꽉 채우도록 */
+    opacity:.3; /* (수정) 배경이 너무 튀지 않도록 투명도 조절 */
+}
+/* (추가) 모바일 레이아웃을 위한 래퍼 */
+/* (수정) 프로젝트 카드 등장 애니메이션을 위해 transition-delay 추가 */
+.play{position:absolute;opacity:0;transition:opacity .8s ease-out,transform .8s ease-out;transform:scale(.8) translateY(20px);z-index:5;
+    transition-delay: var(--delay, 0s); /* JS에서 제어할 딜레이 변수 */
+}
+.play.is-visible{opacity:1;transform:scale(1) translateY(0)}
+/* (수정) 카드 크기 및 모양 변경 */
+.project-thumbnail {
+    width: clamp(280px, 20vw, 340px); /* (수정) 화면 크기에 따라 유연하게 조절되는 반응형 너비 */
+    background-color: #1a1a1a;
+    padding: 1.2rem;
+    box-sizing: border-box;
+    text-align: left;
+    position: relative; /* (추가) 글로시 효과를 위함 */
+    overflow: hidden;   /* (추가) 글로시 효과를 위함 */
+    /* (수정) clip-path를 위한 트랜지션 추가 */
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, clip-path 0.3s ease-out;
+    /* (추가) 3D 효과를 위한 원근감 설정 */
+    perspective: 1000px;
+    /* (추가) 비대칭적인 모양으로 클리핑 */
+    clip-path: polygon(0 25px, 25px 0, 100% 0, 100% calc(100% - 25px), calc(100% - 25px) 100%, 0 100%);
+}
+.project-thumbnail:hover {
+    /* (수정) 3D 회전 효과로 변경 */
+    transform: rotateY(-5deg) rotateX(5deg) scale(1.05);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 255, 255, 0.2); /* (수정) 그림자 및 은은한 빛 효과 강화 */
+    z-index: 10; /* (추가) 다른 요소 위로 올라오도록 설정 */
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); /* (추가) 호버 시 원래 사각형 모양으로 */
+}
+/* (추가) 호버 시 이미지와 텍스트에 3D 효과 적용 */
+.project-thumbnail:hover img { transform: translateZ(20px); }
+.project-thumbnail:hover .project-category,
+.project-thumbnail:hover h3,
+.project-thumbnail:hover .view-button { transform: translateZ(40px); }
+
+/* (추가) 글로시 효과 */
+.project-thumbnail::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 70%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%);
+    transform: skewX(-25deg);
+    transition: left 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.project-thumbnail:hover::after {
+    left: 150%;
+}
+.project-thumbnail img {
+    width:100%;height:180px;object-fit:cover;margin-bottom:.8rem;
+    /* (추가) 3D 효과를 위한 트랜지션 */
+    transition: transform 0.4s ease-out;
+}
+.project-thumbnail .project-category{font-size:.9rem;color:#bbb;margin:0 0 .2rem;letter-spacing:.5px}
+.project-thumbnail h3{margin:0;font-size:1.6rem;color:#fff;letter-spacing:1px;margin-bottom:.8rem}
+.view-button{display:block;width:100%;padding:.6rem 0;background-color:#333;color:#fff;text-decoration:none;font-size:1.1rem;letter-spacing:1px;text-align:center;transition:background-color .3s;margin-top:1rem;border:1px solid #444}
+.view-button:hover{background-color:#555}
+/* (수정) 겹치지 않도록 카드 배치 최종 수정 */
+.play-1{top:5%;left:5%;transform:rotate(-8deg)}.play-1 .project-thumbnail{border-color:var(--project-color-1)}
+.play-2{top:5%;right:5%;transform:rotate(10deg)}.play-2 .project-thumbnail{border-color:var(--project-color-2)}
+.play-3{top:35%;left:30%;transform:rotate(3deg)}.play-3 .project-thumbnail{border-color:var(--project-color-3)}
+.play-4{top:35%;right:30%;transform:rotate(-5deg)}.play-4 .project-thumbnail{border-color:var(--project-color-4)}
+.play-5{bottom:5%;left:10%;transform:rotate(5deg)}.play-5 .project-thumbnail{border-color:var(--project-color-5)}
+.play-6{bottom:5%;right:10%;transform:rotate(-12deg)}.play-6 .project-thumbnail{border-color:var(--project-color-6)}
+
+/* (추가) Works 섹션 반응형 레이아웃 */
+@media (max-width: 768px) {
+    #works-section {
+        min-height: auto; /* 콘텐츠 높이에 맞게 자동 조절 */
+        padding-bottom: 100px;
+    }
+    .play-wrapper {
+        position: static; /* static으로 변경하여 일반적인 흐름 따르도록 */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2.5rem;
+    }
+    .play {
+        position: static; /* static으로 변경 */
+        transform: none !important; /* 기존 transform 효과 제거 */
+    }
+    .project-thumbnail {
+        width: 90vw; /* 화면 너비에 맞게 조절 */
+        max-width: 400px;
+    }
+}
+
+/* --- 프로젝트 상세 정보 모달 --- */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.85);display:flex;justify-content:center;align-items:center;z-index:10000;visibility:hidden;opacity:0;transition:visibility 0s .4s,opacity .4s ease}
+.modal-overlay.is-visible{visibility:visible;opacity:1;transition-delay:0s}
+.modal-content{background-color:#1a1a1a;width:90%;max-width:1600px;max-height:90vh;overflow-y:auto;border:1px solid #444;position:relative;padding:3rem;box-sizing:border-box;transform:translateY(20px) scale(.98);transition:transform .4s ease-out} /* (수정) 최대 너비 1600px로 증가 */
+.modal-overlay.is-visible .modal-content{transform:translateY(0) scale(1)}
+.modal-close{position:absolute;top:1rem;right:1.5rem;background:0 0;border:none;color:#888;font-size:3rem;cursor:pointer;transition:color .3s;line-height:1}
+.modal-close:hover{color:#fff}
+.modal-grid{display:grid;grid-template-columns:2fr 1fr;gap:2.5rem}
+.modal-image-wrapper img{width:100%;height:auto;max-height:75vh;object-fit:contain}
+.modal-info-wrapper h2{font-size:4rem;margin:0 0 .5rem;letter-spacing:2px;color:#fff} /* (수정) 제목 폰트 크기 증가 */
+.modal-info-wrapper #modal-category{font-size:1.1rem;color:#aaa;margin:0 0 2.5rem;letter-spacing:1px}
+.info-group{margin-bottom:2rem}
+.info-group h3{font-size:1.2rem;letter-spacing:2px;color:#888;margin:0 0 .5rem;border-bottom:1px solid #444;padding-bottom:.5rem}
+/* (수정) 일관성을 위해 폰트 재지정 (기존과 동일하지만 확인차) */
+.info-group p,.info-group div{font-size:1.15rem;line-height:1.8;color:#ddd;font-family:'Inter', sans-serif} /* (수정) 본문 폰트 크기 및 줄 간격 증가 */
+.modal-content::-webkit-scrollbar{width:8px}
+.modal-content::-webkit-scrollbar-track{background:#1a1a1a}
+.modal-content::-webkit-scrollbar-thumb{background:#555}
+
+/* --- (중복 제거) ... 이하 스타일 동일 ... --- */
+
+
+/* --- 연락처 섹션 기본 --- */
+.bg-court {
+  position: relative;
+  width: 100vw; height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.court-bg-img {
+  position: absolute; 
+  /* (수정) 패럴랙스 효과를 위해 이미지 크기 확대 및 중앙 정렬 */
+  top: -5%; left: -5%;
+  width: 110%; height: 110%;
+  object-fit: cover; z-index: 0;
+  filter: brightness(0.7) blur(1px) saturate(0.8); /* (수정) 더 어둡고 차분한 분위기로 필터 조정 */
+  /* (삭제) 패럴랙스 효과를 위한 transition 제거 */
+}
+.court-overlay {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle, transparent 40%, rgba(13,13,13,0.9) 85%); /* (수정) 중앙은 밝고 가장자리는 어두운 효과 */
+  z-index: 1;
+}
+.hero-content {
+  position: relative; z-index: 10; color: #fff;
+  text-align: center; width: 100%;
+  font-family: 'Bebas Neue', 'Inter', sans-serif;
+}
+.hero-content h1 {
+  font-weight: 900; font-size: 4.5rem; letter-spacing: 2px; margin-bottom: 1rem; /* (수정) 폰트 크기 증가 */
+  text-shadow: 0 2px 16px #142c52cc, 0 1px 2px #000d;
+}
+.hero-content p {
+  font-size: 1.2rem; font-weight: 700; margin-bottom: 2.5rem; letter-spacing: 0.1em; /* (수정) 폰트 크기 및 간격 조정 */
+}
+.icon-links {
+  display: flex; gap: 2rem; justify-content: center; margin-top: 1rem;
+}
+.icon-links a {
+  width: 56px; height: 56px; border:3px solid var(--project-color-1); border-radius:50%; background:#1118;
+  color: #fff; display:flex; align-items:center; justify-content:center; font-size:2rem; 
+  /* (수정) transform을 포함하도록 transition 속성 변경 */
+  transition: color 0.3s, background-color 0.3s, border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+.icon-links a:hover { 
+  border-color: var(--visual-color); 
+  background: #222d; 
+  color: var(--visual-color); 
+  box-shadow: 0 0 12px var(--visual-color);
+  transform: scale(1.1); /* (추가) 아이콘을 10% 크게 만듦 */
+}
+.hero-footer {
+  position: absolute; bottom: 16px; width: 100%; color: #eee9; font-size: .92rem; text-align: center; z-index: 20;
+}
+
+/* --- (수정) 맨 위로 가기: 탑다운 뷰 농구 골대 --- */
+.hoop-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 120px; /* 전체 컨테이너 크기 조정 */
+    height: 120px;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden; /* (수정) 호버 효과를 위한 트랜지션 추가 */
+    transform: translateY(50px);
+    transition: opacity 0.4s ease, visibility 0.4s, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 800px; /* (추가) 3D 효과를 위한 원근감 */
+    z-index: 999;
+}
+.hoop-container.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.hoop-backboard {
+    position: absolute;
+    width: 42px; /* (수정) 전체적인 비율에 맞춰 너비 축소 */
+    height: 90px; /* (수정) 전체적인 비율에 맞춰 높이 축소 */
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    transform: rotateX(60deg) translateZ(-20px); /* (수정) 3D 각도 적용 */
+    transition: transform 0.3s ease-out; /* (추가) 호버 효과를 위한 트랜지션 */
+}
+/* (추가) 백보드 안쪽 사각형 라인 */
+.hoop-backboard::before {
+    content: '';
+    position: absolute;
+    top: 30px; /* (수정) 백보드 높이에 맞춰 위치 조정 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px; /* (수정) 백보드 비율에 맞춰 너비 조정 */
+    height: 18px; /* (수정) 백보드 비율에 맞춰 높이 조정 */
+    border: 2px solid var(--frontend-color);
+    border-radius: 2px;
+}
+/* (추가) 림과 백보드를 연결하는 마운트 */
+.hoop-mount {
+    position: absolute;
+    width: 8px; /* (수정) 전체적인 비율에 맞춰 너비 축소 */
+    height: 16px; /* (수정) 전체적인 비율에 맞춰 높이 축소 */
+    background-color: #282828;
+    border: 1px solid #444; /* (수정) 호버 효과를 위한 트랜지션 추가 */
+    transform: rotateX(60deg) translateZ(-10px);
+    z-index: 1;
+}
+.hoop-rim {
+    position: relative; /* 자식 pseudo-element를 위함 */
+    width: 40px; /* (수정) 림 크기 축소 */
+    height: 68px; /* (수정) 3D 뷰에서 정원으로 보이도록 높이 조정 */
+    border: 3px solid var(--frontend-color); /* (수정) 테두리 두께 조정 */
+    border-radius: 50%; /* (수정) 입체감을 위한 inset 그림자 및 트랜지션 추가 */ /* (수정) 백보드에 비치는 그림자 추가 */
+    box-shadow: 0 15px 10px -5px rgba(0,0,0,0.4), inset 0 3px 5px rgba(0,0,0,0.6);
+    /* (수정) 그물망 효과를 위한 radial-gradient 배경 추가 */
+    background-image: radial-gradient(circle, transparent 60%, rgba(255,255,255,0.2) 62%, transparent 64%),
+                      radial-gradient(circle, transparent 80%, rgba(255,255,255,0.15) 82%, transparent 84%);
+    background-color: rgba(0,0,0,0.3);
+    transform: rotateX(60deg);
+    /* (삭제) 호버 효과를 위한 transition 제거 */
+}
+/* (추가) 그물 통과 애니메이션을 위한 가상 요소 */
+.hoop-rim::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background-image: radial-gradient(circle at 50% 100%, transparent 50%, rgba(255,255,255,0.3) 90%);
+    clip-path: polygon(20% 0, 80% 0, 100% 100%, 0% 100%);
+    opacity: 0;
+    transform-origin: top center;
+}
+/* (추가) 림 상단 하이라이트 및 네트 고리 디테일 */
+.hoop-rim::after {
+    content: '';
+    position: absolute;
+    inset: -3px; /* (수정) 림 테두리 두께만큼 확장 */
+    border-radius: 50%;
+    /* 상단 하이라이트 */
+    border-top: 2px solid rgba(255,255,255,0.2);
+    /* 네트 고리 (12개) */
+    background-image: repeating-conic-gradient(rgba(255,255,255,0.4) 0% 1.5%, transparent 1.5% 8.33%);
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.8));
+}
+
+/* (추가) 마우스 호버 시 3D 인터랙션 */
+.hoop-container:hover .hoop-backboard {
+    transform: rotateX(55deg) rotateY(-5deg) translateZ(-20px);
+}
+.hoop-container:hover .hoop-rim {
+    transform: rotateX(55deg) rotateY(-5deg);
+}
+.hoop-container:hover .hoop-mount {
+    transform: rotateX(55deg) rotateY(-5deg) translateZ(-10px);
+}
+.hoop-backboard, .hoop-rim, .hoop-mount {
+    transition: transform 0.3s ease-out; /* (추가) 호버 효과를 위한 공통 트랜지션 */
+}
+
+.hoop-container.is-swishing {
+    animation: hoop-shake 0.3s ease-in-out; /* (추가) 골대 전체 흔들림 효과 */
+}
+.hoop-container.is-swishing .hoop-rim::before {
+    animation: net-swish 0.5s ease-out;
+}
+/* (추가) 골대 흔들림 애니메이션 */
+@keyframes hoop-shake {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    25% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(1px) rotate(1deg); }
+    75% { transform: translateY(0) rotate(0); }
+}
+/* (수정) 그물 애니메이션을 더 탄력적으로 변경 */
+@keyframes net-swish {
+    0% { transform: scaleY(0); opacity: 0; }
+    40% { transform: scaleY(1.6); opacity: 1; } /* 더 깊게 출렁임 */
+    70% { transform: scaleY(0.7); opacity: 0.8; } /* 위로 반동 */
+    100% { transform: scaleY(0); opacity: 0; }
+}
+/* (수정) 클릭 시 'Swish' 애니메이션: 빛과 수축 효과 */
+.hoop-container.is-swishing .hoop-rim {
+    animation: swish-and-glow 0.5s ease-out; /* (수정) 애니메이션 시간 조정 */
+}
+@keyframes swish-and-glow {
+    0% {
+        transform: rotateX(60deg) scale(1);
+        box-shadow: 0 15px 10px -5px rgba(0,0,0,0.4), inset 0 3px 5px rgba(0,0,0,0.6), 0 0 0px rgba(var(--frontend-color-rgb), 0);
+    }
+    30% {
+        transform: rotateX(60deg) scale(0.95);
+        box-shadow: 0 15px 10px -5px rgba(0,0,0,0.4), inset 0 3px 5px rgba(0,0,0,0.6), 0 0 15px 5px rgba(var(--frontend-color-rgb), 0.5);
+    }
+    50% {
+        transform: rotateX(60deg) scale(1.05);
+        box-shadow: 0 15px 10px -5px rgba(0,0,0,0.4), inset 0 3px 5px rgba(0,0,0,0.6), 0 0 30px 15px rgba(var(--frontend-color-rgb), 0.8);
+    }
+    100% {
+        transform: rotateX(60deg) scale(1);
+        box-shadow: 0 15px 10px -5px rgba(0,0,0,0.4), inset 0 3px 5px rgba(0,0,0,0.6), 0 0 0px rgba(var(--frontend-color-rgb), 0);
+    }
+}
+
+/* --- (수정) 커스텀 마우스 커서: 농구공 이미지 --- */
+body {
+    cursor: none; /* 기본 커서 숨기기 */
+}
+.custom-cursor {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    background-image: url('농구공임.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: transform 0.2s ease-out;
+    opacity: 0; /* (수정) 초기에 커서가 보이지 않도록 설정 */
+    z-index: 10001;
+}
+
+/* 링크나 버튼에 호버 시 효과 */
+.cursor-hovered .custom-cursor {
+    transform: translate(-50%, -50%) scale(1.2) rotate(30deg);
+}
+
+/* (추가) 사운드 재생용 비디오 숨기기 */
+#loader-dribble-video {
+    display: none;
+}
