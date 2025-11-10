@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Designer on the Court</title>
+    <!-- (수정) 원래 폰트로 복원: Teko, Bebas Neue, Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@700&family=Bebas+Neue&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/r128/examples/js/loaders/GLTFLoader.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- (수정) 로더가 초기에 바로 보이도록 변경 -->
+    <div id="loader-wrapper">
+        <div class="ball-container" id="loading-3d-container">
+            <!-- (수정) audio 태그를 img 태그로 변경하고, id와 alt 속성 추가 -->
+            <img src="농구공임.png" id="loading-ball" alt="Loading basketball">
+        </div>
+        <!-- (수정) 로딩 텍스트에 애니메이션을 위한 span 추가 -->
+        <div class="loading-text" id="loader-text"><span>LOADING</span><span class="dots"></span></div>
+        <div class="start-prompt" id="start-prompt">CLICK TO START</div>
+    </div>
+
+    <header id="main-header">
+        <div class="logo">THE DESIGNER</div>
+        <nav>
+            <ul>
+                <li><a href="#content">HOME</a></li>
+                <li><a href="#stats-section">STATS</a></li>
+                <li><a href="#works-section">WORKS</a></li>
+                <li><a href="#contact-section">CONTACT</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="content">
+        <div class="main-intro-text">
+            <span class="text-part">THE</span>
+            <span class="text-part">DESIGNER</span>
+            <span class="text-part">ON</span>
+            <span class="text-part">THE</span>
+            <span class="text-part">COURT</span>
+        </div>
+
+        <div class="home-content-inner">
+            <div class="about-me">
+                <h2>ABOUT ME</h2>
+                <p>안녕하세요. 코트 위에서 전략을 짜듯, 화면 위에서 사용자 경험을 설계하는 웹 디자이너 이상훈입니다. <br>
+                     저는 사용자의 니즈를 정확히 파악하고, 직관적이면서도 매력적인 디자인을 구현하는 것에 집중합니다.</p>
+            </div>
+            <div class="design-philosophy">
+                <h2>MY DESIGN PHILOSOPHY</h2>
+                <p class="typing-text" id="typing-philosophy">"훌륭한 디자인은 화려한 덩크슛이 아니라, 팀(사용자)을 승리로 이끄는 완벽한 어시스트입니다."</p>
+            </div>
+        </div>
+    </main>
+    
+    <section id="stats-section">
+        <div class="stats-container">
+            <div class="player-card reveal-on-scroll">
+                <div class="player-info"><div class="overall-rating">85</div><div class="player-details"><h1>Lee sang hun</h1><p>WEB DESIGNER</p></div></div>
+                <div class="player-archetype"><span>Find out my stats!</span></div>
+            </div>
+            
+            <div class="skills-grid reveal-on-scroll">
+                <div class="skill-category cat-visual wide">
+                    <h2 class="category-title">VISUAL & STRATEGIST</h2> 
+                    <div class="category-content-wrapper">
+                        <div class="dynamic-profile">
+                            <img src="내 사진띠.jpg" alt="Profile Image">
+                        </div>
+                        <div class="bars-container">
+                            <div class="skill-bar-wrapper"><span class="skill-value">80</span><div class="bar-bg"><div class="bar" data-skill="80"></div></div><span class="skill-name">WIREFRAMING</span></div>
+                            <div class="skill-bar-wrapper"><span class="skill-value">80</span><div class="bar-bg"><div class="bar" data-skill="80"></div></div><span class="skill-name">PROTOTYPING</span></div>
+                            <div class="skill-bar-wrapper"><span class="skill-value">80</span><div class="bar-bg"><div class="bar" data-skill="80"></div></div><span class="skill-name">D&S</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="skill-category cat-uiux">
+                    <h2 class="category-title">UI / UX</h2>
+                    <div class="bars-container">
+                        <div class="skill-bar-wrapper"><span class="skill-value">80</span><div class="bar-bg"><div class="bar" data-skill="80"></div></div><span class="skill-name">FIGMA</span></div>
+                        <div class="skill-bar-wrapper"><span class="skill-value">80</span><div class="bar-bg"><div class="bar" data-skill="80"></div></div><span class="skill-name">ADOBE</span></div>
+                        <div class="skill-bar-wrapper"><span class="skill-value">80</span><div class="bar-bg"><div class="bar" data-skill="80"></div></div><span class="skill-name">PHOTOSHOP</span></div>
+                    </div>
+                </div>
+                
+                <div class="skill-category cat-strategy">
+                    <h2 class="category-title">VIDEO EDITING</h2>
+                    <div class="bars-container">
+                        <div class="skill-bar-wrapper"><span class="skill-value">90</span><div class="bar-bg"><div class="bar" data-skill="90"></div></div><span class="skill-name">PREMIERE</span></div>
+                        <div class="skill-bar-wrapper"><span class="skill-value">85</span><div class="bar-bg"><div class="bar" data-skill="85"></div></div><span class="skill-name">AE</span></div>
+                        <div class="skill-bar-wrapper"><span class="skill-value">80</span><div class="bar-bg"><div class="bar" data-skill="80"></div></div><span class="skill-name">VEGAS</span></div>
+                    </div>
+                </div>
+                
+                <div class="skill-category cat-frontend">
+                    <h2 class="category-title">CODING ABILITY</h2>
+                    <div class="bars-container">
+                        <div class="skill-bar-wrapper"><span class="skill-value">85</span><div class="bar-bg"><div class="bar" data-skill="85"></div></div><span class="skill-name">CSS</span></div>
+                        <div class="skill-bar-wrapper"><span class="skill-value">80</span><div class="bar-bg"><div class="bar" data-skill="80"></div></div><span class="skill-name">JS</span></div>
+                        <div class="skill-bar-wrapper"><span class="skill-value">90</span><div class="bar-bg"><div class="bar" data-skill="90"></div></div><span class="skill-name">INTERACT</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="works-section">
+        <h1 class="section-title reveal-on-scroll">HIGHLIGHTS</h1>
+        <!-- (추가) Jumbotron UI -->
+        <div class="jumbotron-wrapper reveal-on-scroll">
+            <!-- (추가) Jumbotron 헤더 -->
+            <div class="jumbotron-header">
+                <div class="live-indicator">LIVE</div>
+                <div>HIGHLIGHT REEL</div>
+            </div>
+            <div class="jumbotron-screen" id="jumbotron-screen">
+                <!-- 프로젝트 슬라이드들은 JS로 동적 생성됩니다. -->
+            </div>
+            <!-- (추가) Jumbotron 푸터 -->
+            <div class="jumbotron-footer">
+                <div>PROJECT ARCHIVE</div> <!-- (수정) 텍스트 변경 -->
+                <div>NOW SHOWING</div>
+            </div>
+        </div>
+
+        <!-- (삭제) 기존 playbook 마크업 제거 -->
+        <!-- (추가) 프로젝트 데이터를 저장할 숨겨진 컨테이너 -->
+        <div id="project-data" style="display: none;">
+            <div class="project-item" 
+                data-img="https://placehold.co/1200x800/e06c75/white?text=SLAM+DUNK"
+                data-title="Project Slam Dunk"
+                data-category="Mobile App UI/UX Design"
+                data-description="<p>사용자가 농구 경기를 기록하고 분석할 수 있는 모바일 애플리케이션의 UI/UX를 디자인했습니다.</p><p>NBA 2K의 직관적인 인터페이스에서 영감을 받아, 복잡한 데이터를 시각적으로 이해하기 쉽게 표현하는 데 중점을 두었습니다.</p>"
+                data-role="UI/UX Designer"
+                data-tools="Figma, Illustrator">
+            </div>
+            <div class="project-item"
+                data-img="https://placehold.co/1200x800/98c379/white?text=WINNING+DESIGN"
+                data-title="Winning Design"
+                data-category="Web Redesign"
+                data-description="<p>기존 스포츠 용품 브랜드의 웹사이트를 전면 리뉴얼하는 프로젝트를 진행했습니다. 사용자의 구매 여정을 단축하고 브랜드 아이덴티티를 강화하는 데 집중했습니다.</p>"
+                data-role="Web Designer, Project Manager"
+                data-tools="Adobe XD, Photoshop, HTML/CSS">
+            </div>
+            <div class="project-item" data-img="https://placehold.co/1200x800/61afef/white?text=FINAL+SHOT" data-title="The Final Shot" data-category="Interactive Campaign" data-description="<p>농구 시즌 오프닝을 기념하는 인터랙티브 웹 캠페인을 기획하고 디자인했습니다. 사용자의 참여를 유도하는 게임 요소를 통해 높은 바이럴 효과를 달성했습니다.</p>" data-role="Interaction Designer" data-tools="Figma, After Effects, Javascript"></div>
+            <div class="project-item" data-img="https://placehold.co/1200x800/c678dd/white?text=CAGE+CRIBICITY" data-title="Cage Cribicity" data-category="Smartwatch UI" data-description="<p>농구 선수를 위한 스마트워치 인터페이스를 디자인했습니다. 작은 화면에서도 경기 데이터와 신체 상태를 명확하게 확인할 수 있도록 정보 구조를 설계했습니다.</p>" data-role="UI Designer" data-tools="Sketch, Zeplin"></div>
+            <div class="project-item" data-img="https://placehold.co/1200x800/56b6c2/white?text=TORET+OBRDUNY" data-title="Toret Obrduny" data-category="IoT Mobile App" data-description="<p>스마트 농구공과 연동되는 모바일 앱을 디자인했습니다. 공의 궤적, 속도, 회전 등을 분석하여 사용자에게 실시간 피드백을 제공합니다.</p>" data-role="Product Designer" data-tools="Figma, Principle"></div>
+            <div class="project-item" data-img="https://placehold.co/1200x800/e06c75/white?text=PROJECT+X" data-title="Project X" data-category="VR/AR Experience" data-description="<p>가상 현실에서 농구 훈련을 할 수 있는 VR 콘텐츠의 사용자 경험을 설계했습니다. 몰입감 높은 환경과 직관적인 조작성에 집중했습니다.</p>" data-role="UX Designer" data-tools="Unity, Blender"></div>
+        </div>
+    </section>
+
+    <div id="project-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div class="modal-grid">
+                <div class="modal-image-wrapper">
+                    <img src="" alt="Project Image" id="modal-img">
+                </div>
+                <div class="modal-info-wrapper">
+                    <h2 id="modal-title"></h2>
+                    <p id="modal-category"></p>
+                    <div class="info-group">
+                        <h3>OVERVIEW</h3>
+                        <div id="modal-description"></div>
+                    </div>
+                    <div class="info-group">
+                        <h3>MY ROLE</h3>
+                        <p id="modal-role"></p>
+                    </div>
+                    <div class="info-group">
+                        <h3>TOOLS</h3>
+                        <p id="modal-tools"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- (수정) Contact 섹션: "LET'S DRAW UP A PLAY" 컨셉으로 전면 수정 -->
+    <section id="contact-section">
+      <div class="contact-content">
+        
+        <h1>LET'S MAKE A PLAY</h1>
+        <p>Drag [YOUR PROJECT] to a player to make a winning pass!</p>
+        
+        <div class="draggable-ball" id="draggable-ball" draggable="true">
+          YOUR<br>PROJECT
+        </div>
+    
+        <div class="icon-links">
+          <a href="#" id="email-btn" class="drop-zone" data-email="your.email@example.com">
+            <i class="fa fa-envelope"></i>
+          </a>
+          <a href="https://www.linkedin.com/in/your-profile-url" target="_blank" id="linkedin-btn" class="drop-zone">
+            <i class="fab fa-linkedin"></i>
+          </a>
+          <a href="https://github.com/your-github-id" target="_blank" id="github-btn" class="drop-zone">
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+    
+        <svg class="playbook-lines" width="100%" height="100%">
+          <defs>
+            <filter id="wavy"><feTurbulence x="0" y="0" baseFrequency="0.02" numOctaves="5" seed="2" /><feDisplacementMap in="SourceGraphic" scale="20" /></filter>
+          </defs>
+          </svg>
+    
+      </div>
+    </section>
+
+    <!-- (수정) 웹 접근성을 위해 div를 button 태그로 변경 -->
+    <button class="hoop-container" id="back-to-top-hoop" aria-label="Go to top">
+        <div class="hoop-backboard"></div>
+        <div class="hoop-mount"></div>
+        <div class="hoop-rim"></div>
+    </button>
+
+    <!-- (수정) 커스텀 마우스 커서: 농구공 이미지로 변경 -->
+    <div class="custom-cursor"></div>
+
+    <!-- (수정) 사운드 이펙트 -->
+    <!-- (수정) 로딩 드리블 사운드 audio 태그로 변경 -->
+    <audio id="loader-dribble-video" src="basketball-dribble-1-go-go.mp3" preload="auto"></audio>
+    <audio id="intro-dribble-sound" src="dribble-sound.mp3" preload="auto" loop></audio> <!-- (ID 변경) 인트로 텍스트용 소리 -->
+    <audio id="swish-sound" src="swish-sound.mp3" preload="auto"></audio>
+    <audio id="click-sound" src="click-sound.mp3" preload="auto"></audio>
+    <audio id="open-modal-sound" src="open-modal-sound.mp3" preload="auto"></audio>
+    <audio id="stats-rise-sound" src="stats-rise-sound.mp3" preload="auto"></audio> <!-- (추가) 스탯 차트 상승 사운드 -->
+    <audio id="stat-sound" src="stat_up.mp3" preload="auto"></audio> <!-- (수정) 스탯 차트용 사운드 -->
+    <audio id="glitch-sound" src="card-flip.mp3" preload="auto"></audio> <!-- (ID 변경) Jumbotron 전환 효과음 -->
+    <audio id="drawing-sound" src="drawing-sound.mp3" preload="auto" loop></audio> <!-- (추가) 작전판 그리기 효과음 -->
+
+    <script src="script.js"></script>
+    
+    </body>
+</html>
